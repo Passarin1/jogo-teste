@@ -1,0 +1,20 @@
+{
+  "name": "Última Muralha v1.0",
+  "short_name": "Muralha",
+  "description": "Tower Defense 2D jogável no navegador e instalável no celular.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#07111b",
+  "theme_color": "#07111b",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

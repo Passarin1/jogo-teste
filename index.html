@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#07111b" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Última Muralha v1.0 — Tower Defense 2D</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icon.svg" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="panel side-panel left-panel">
+        <div class="brand-block">
+          <p class="eyebrow">TOWER DEFENSE 2D</p>
+          <div class="title-row">
+            <h1>Última Muralha</h1>
+            <span class="version-badge">v1.0</span>
+          </div>
+          <p class="subtitle">
+            Defenda o núcleo da cidade contra ondas cada vez mais brutais usando
+            torres, upgrades e um pulso orbital devastador.
+          </p>
+        </div>
+
+        <section class="card">
+          <div class="card-header">
+            <h2>Construção</h2>
+            <span>Escolha sua defesa</span>
+          </div>
+          <div id="towerButtons" class="tower-list"></div>
+        </section>
+
+        <section class="card compact-card">
+          <div class="card-header">
+            <h2>Atalhos</h2>
+            <span>Comando rápido</span>
+          </div>
+          <ul class="tips-list">
+            <li><code>1-6</code> selecionam torres</li>
+            <li><code>N</code> inicia a próxima onda</li>
+            <li><code>F</code> ativa o pulso orbital</li>
+            <li><code>V</code> alterna a velocidade</li>
+            <li><code>A</code> ativa auto rodada</li>
+            <li><code>P</code> pausa ou retoma a partida</li>
+          </ul>
+        </section>
+      </aside>
+
+      <main class="center-panel">
+        <section class="hud-bar">
+          <div class="stat-card">
+            <span>Ouro</span>
+            <strong id="goldValue">170</strong>
+          </div>
+          <div class="stat-card">
+            <span>Vidas</span>
+            <strong id="livesValue">20</strong>
+          </div>
+          <div class="stat-card">
+            <span>Onda</span>
+            <strong id="waveValue">0</strong>
+          </div>
+          <div class="stat-card">
+            <span>Pontuação</span>
+            <strong id="scoreValue">0</strong>
+          </div>
+          <div class="stat-card highlight">
+            <span>Sobrecarga</span>
+            <strong id="chargeValue">35%</strong>
+          </div>
+        </section>
+
+        <section class="battlefield-card">
+          <canvas id="gameCanvas" width="960" height="600"></canvas>
+
+          <div id="bossHud" class="boss-hud" hidden>
+            <div class="boss-header">
+              <span>ALVO PRIORITÁRIO</span>
+              <strong id="bossName">Titan</strong>
+            </div>
+            <div class="boss-bar">
+              <div id="bossBarFill" class="boss-bar-fill"></div>
+            </div>
+          </div>
+
+          <div id="overlay" class="overlay">
+            <div class="overlay-card menu-card">
+              <p class="eyebrow">CENTRO DE COMANDO</p>
+              <h2 id="overlayTitle">Última Muralha</h2>
+              <p id="overlayText">
+                Escolha uma fase, leia o plano tático e inicie a defesa do núcleo.
+              </p>
+
+              <div class="menu-section">
+                <h3>Fases</h3>
+                <div id="phaseButtons" class="chip-list"></div>
+              </div>
+
+              <div class="menu-section">
+                <h3>Dificuldade</h3>
+                <div id="difficultyButtons" class="chip-list"></div>
+              </div>
+
+              <div class="howto-box">
+                <h3>Como jogar</h3>
+                <ol>
+                  <li>Escolha uma torre no painel ou nos botões móveis.</li>
+                  <li>Toque ou clique nos círculos do mapa para construir.</li>
+                  <li>Inicie a onda e impeça os inimigos de chegarem ao núcleo.</li>
+                  <li>Use upgrades, venda torres e solte o pulso orbital no momento certo.</li>
+                </ol>
+                <p class="mobile-note">
+                  📱 No celular, use os atalhos rápidos logo abaixo do mapa.
+                </p>
+              </div>
+
+              <div class="menu-actions">
+                <button id="overlayAction" class="button primary-button">
+                  Iniciar defesa
+                </button>
+                <button id="installBtn" class="button ghost-button">
+                  Baixar no celular
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card mobile-controls">
+          <div class="card-header">
+            <h2>Controles móveis</h2>
+            <span>Toque rápido</span>
+          </div>
+          <div id="mobileTowerButtons" class="mobile-tower-row"></div>
+          <div class="mobile-action-row">
+            <button id="mobileWaveBtn" class="button primary-button">Onda</button>
+            <button id="mobileAbilityBtn" class="button secondary-button">Pulso</button>
+            <button id="mobileSpeedBtn" class="button ghost-button">Velocidade</button>
+            <button id="mobileAutoBtn" class="button ghost-button">Auto</button>
+          </div>
+        </section>
+      </main>
+
+      <aside class="panel side-panel right-panel">
+        <section class="card">
+          <div class="card-header">
+            <h2>Comando</h2>
+            <span id="waveStatus">Aguardando ordem</span>
+          </div>
+
+          <div class="action-grid">
+            <button id="startWaveBtn" class="button primary-button">
+              Iniciar onda
+            </button>
+            <button id="abilityBtn" class="button secondary-button">
+              Pulso orbital
+            </button>
+            <button id="speedBtn" class="button ghost-button">
+              Velocidade x1
+            </button>
+            <button id="autoWaveBtn" class="button ghost-button">
+              Auto rodada: off
+            </button>
+            <button id="restartBtn" class="button ghost-button">
+              Reiniciar
+            </button>
+          </div>
+
+          <p id="statusHint" class="status-hint">
+            Escolha uma torre e clique nos círculos do mapa para construir.
+          </p>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h2>Intel da próxima onda</h2>
+            <span>Leitura tática</span>
+          </div>
+          <div id="nextWavePreview" class="preview-box"></div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h2>Torre selecionada</h2>
+            <span>Upgrade & venda</span>
+          </div>
+
+          <div id="selectedTowerInfo" class="selected-info empty-state">
+            Clique em uma torre já construída para ver os detalhes.
+          </div>
+
+          <div class="action-grid vertical">
+            <button id="upgradeBtn" class="button secondary-button" disabled>
+              Melhorar
+            </button>
+            <button id="sellBtn" class="button ghost-button danger" disabled>
+              Vender
+            </button>
+          </div>
+        </section>
+
+        <section class="card log-card">
+          <div class="card-header">
+            <h2>Registro tático</h2>
+            <span>Ao vivo</span>
+          </div>
+          <div id="eventLog" class="event-log"></div>
+        </section>
+      </aside>
+    </div>
+
+    <script src="game.js"></script>
+  </body>
+</html>
